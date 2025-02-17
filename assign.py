@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver import ActionChains
 from seleniumwire import webdriver
 import time
-
+import random
 from scapy.all import *
 
 from scapy.interfaces import IFACES
@@ -19,6 +19,14 @@ import json
 import argparse
 import csv
 
+def vary_bandwidth(driver):
+    bandwidth = random.randint(50 * 1024, 5 * 1024 * 1024)  # Random bandwidth between 50 kbps and 5 Mbps
+    driver.set_network_conditions(
+        offline=False,
+        latency=0,
+        download_throughput=bandwidth,
+        upload_throughput=bandwidth
+    )
 
 def packet_filter(packet):
     if packet.haslayer(IP):
@@ -78,11 +86,10 @@ def startPlayer(url, timeout, output_csv, output_log):
         all_resolutions.append(res)
         all_speeds.append(speed)
         all_buffer_lengths.append(buffer_length)
-
         with open(output_csv, 'a', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
             csv_writer.writerow([time.time(), res, buffer_length])
-    
+        vary_bandwidth(driver)
     print("End Sniff")
     driver.close()
     
