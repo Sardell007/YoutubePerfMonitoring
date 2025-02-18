@@ -1,9 +1,5 @@
 setlocal enabledelayedexpansion
 
-:: Fix date and time formatting
-set dt=%TIME:~0,2%_%TIME:~3,2%_%TIME:~6,2%
-set dt=%dt: =0%
-
 :: Define URLs
 set URL1="https://www.youtube.com/watch?v=8_OWMx98X4w"
 set URL2="https://www.youtube.com/watch?v=eDj1KRqHbZc&list=PLtMv0AJo8LlIax9mNM8YDiIGh3bdV-UuV&index=57"
@@ -61,6 +57,9 @@ set URL50="https://www.youtube.com/watch?v=8NvzdQ38l6Q&list=PLtMv0AJo8LlIax9mNM8
 for /L %%i in (1,1,25) do (
     set "currentURL=!URL%%i!"
     echo Processing: !currentURL!
+    :: Fix date and time formatting
+    set dt=%TIME:~0,2%_%TIME:~3,2%_%TIME:~6,2%
+    set dt=%dt: =0%
     python assign.py --url !currentURL! --output_pref "563499_%dt%" --shaping True
 )
 
