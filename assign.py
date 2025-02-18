@@ -86,7 +86,7 @@ def startPlayer(url, timeout, output_csv, output_log):
         all_resolutions.append(res)
         all_speeds.append(speed)
         all_buffer_lengths.append(buffer_length)
-        with open(output_csv, 'a', newline='') as csvfile:
+        with open(output_csv, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
             csv_writer.writerow([time.time(), res, buffer_length])
         vary_bandwidth(driver)
@@ -114,7 +114,7 @@ def main(url, output_pref, shaping):
     output_csv = f"{output_pref}.csv"
     output_log = f"{output_pref}.log"
 
-    vid_duration = 10
+    vid_duration = 180
     har_data, packets = startPlayer(url, vid_duration, output_csv, output_log)
     
     all_packets = packets[0]
