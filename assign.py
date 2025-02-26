@@ -86,7 +86,7 @@ def startPlayer(url, timeout, output_csv, output_log):
         all_resolutions.append(res)
         all_speeds.append(speed)
         all_buffer_lengths.append(buffer_length)
-        with open(output_csv, 'w', newline='') as csvfile:
+        with open(output_csv, 'a', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
             csv_writer.writerow([time.time(), res, buffer_length])
         vary_bandwidth(driver)
