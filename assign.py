@@ -115,6 +115,7 @@ def startPlayer(url, timeout, output_csv, output_log, shaping):
     all_speeds = []
     all_har = []
     all_buffer_lengths = []
+    all_csv_rows = []
     print("Starting Sniff")
     start_time = time.time()
     #Concern:sniffing should begin before URL is requested? resolved: no, the metrics computed dont get affected by missing the initial packets
@@ -133,13 +134,16 @@ def startPlayer(url, timeout, output_csv, output_log, shaping):
         all_resolutions.append(res)
         all_speeds.append(speed)
         all_buffer_lengths.append(buffer_length)
-        with open(output_csv, 'a', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile)
-            csv_writer.writerow([time.time(), res, buffer_length])
+        all_csv_rows.append([time.time(), res, buffer_length])
         if shaping:
             vary_bandwidth(driver)
     print("End Sniff")
     driver.close()
+    
+    with open(output_csv, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        for data in all_csv_rows:
+            csv_writer.writerow(data)
     avg_resolution = np.mean([int(re.search(r'\d+', res).group()) for res in all_resolutions if re.search(r'\d+', res)])
     avg_bandwidth = np.mean([float(speed.split()[0]) for speed in all_speeds if speed.split()])
     variance_bandwidth = np.var([float(speed.split()[0]) for speed in all_speeds if speed.split()])
