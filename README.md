@@ -1,3 +1,7 @@
+# Overview of Script:
+
+libraries, how tasks are accomplished
+
 # Design Decisions:
 
 1. Various sources define "start up latency" differently:
@@ -34,6 +38,8 @@ Flag, this allows you to have behaviour as suspicious as possible but hrome will
 
 2. Collecting data every second was also a challenge - 
 
-
-Questions:
+# Part 3 Questions:
 * ytm -> youtube upsteam request
+* every itag is 18
+* i/o graph shows bursts of data
+*  quic data is avaialbke
