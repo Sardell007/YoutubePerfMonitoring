@@ -8,7 +8,6 @@ from seleniumwire import webdriver
 import time
 import random
 from scapy.all import *
-
 import re
 import numpy as np
 import json
@@ -24,68 +23,6 @@ def vary_bandwidth(driver):
         download_throughput=bandwidth,
         upload_throughput=bandwidth
     )
-
-# Since we can’t rely on packet payloads (encrypted), we should filter packets using: 
-# ✅ Ports (80, 443 for HTTP/HTTPS; 443 for QUIC)
-# ✅ YouTube’s Content Delivery Network (CDN) domains (googlevideo.com, youtube.com)
-# ✅ QUIC-specific detection (UDP, port 443, and YouTube-related IPs)
-
-# YouTube Data Flow
-# When you watch a video, the process works like this:
-
-# Your browser/app establishes a TCP connection with YouTube servers
-# A TLS handshake occurs for encryption (when using HTTPS)
-# HTTP requests are sent over this secure TCP connection
-# YouTube servers respond by sending video data in chunks (segments)
-# These segments are typically delivered using adaptive streaming protocols like DASH (Dynamic Adaptive Streaming over HTTP)
-
-# Key Points About YouTube Traffic
-
-# Modern YouTube traffic is almost exclusively encrypted via HTTPS
-# For video delivery, YouTube uses content delivery networks (CDNs)
-# The actual video data is typically streamed as segments requested via HTTP GET requests
-# Multiple parallel TCP connections may be established to improve throughput
-# YouTube uses adaptive bitrate streaming, adjusting quality based on network conditions
-
-from scapy.all import *
-import re
-
-# YouTube-related domains (use external DNS resolution if needed)
-# YOUTUBE_DOMAINS = ["youtube.com", "googlevideo.com", "youtu.be"]
-
-# # YouTube video playback signatures in unencrypted HTTP (rare)
-# VIDEO_STREAM_PATTERNS = re.compile(
-#     r"(videoplayback|mime=video|range=\d+-\d+|clen=\d+|dur=\d+|ctier=|itag=)", re.IGNORECASE
-# )
-
-# # Common ports for YouTube video streaming
-# YOUTUBE_PORTS = {80, 443, 8080}
-
-# def packet_filter(packet):
-#     if packet.haslayer(IP):
-#         # Extract transport layer (TCP/UDP)
-#         if packet.haslayer(TCP) or packet.haslayer(UDP):
-#             port = packet[TCP].dport if packet.haslayer(TCP) else packet[UDP].dport
-            
-#             # Filter by known ports (HTTP, HTTPS, QUIC)
-#             if port in YOUTUBE_PORTS:
-#                 return True
-            
-#         # Check raw data for unencrypted HTTP-based YouTube video streaming
-#         if packet.haslayer(Raw):
-#             raw_data = packet[Raw].load
-#             try:
-#                 decoded_data = raw_data.decode(errors="ignore")
-#                 if VIDEO_STREAM_PATTERNS.search(decoded_data):
-#                     return True
-#             except UnicodeDecodeError:
-#                 pass
-
-#     return False
-
-# def save_dash_packet(packet):
-#     if packet_filter(packet):
-#         pass
 
 def startPlayer(url, timeout, output_csv, output_log, shaping):
     options = Options()
@@ -180,47 +117,3 @@ if __name__ == "__main__":
     parser.add_argument("--shaping", type=bool, default=False, help="Enable network shaping")
     args = parser.parse_args()
     main(args.url, args.output_pref, args.shaping)
-
-#################################### TESTING
-
-# from selenium import webdriver
-# from selenium.webdriver.common.keys import Keys
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.chrome.options import Options
-# from selenium.webdriver import ActionChains
-# from seleniumwire import webdriver
-# import undetected_chromedriver as uc
-# import time
-# from scapy.all import *
-
-# from scapy.interfaces import IFACES
-# import numpy as np
-# import argparse
-
-# def startPlayer(url, timeout):
-#     options = Options()
-#     options.add_argument("--autoplay-policy=no-user-gesture-required")  # Allow autoplay
-#     options.add_argument("--disable-blink-features=AutomationControlled")
-#     driver = webdriver.Chrome(options=options)
-#     # options = uc.ChromeOptions()
-#     # options.binary_location = "C:\\Users\\SanyaKapoor\\Downloads\\chrome-win\\chrome-win\\chrome.exe"
-#     # driver = uc.Chrome(options=options)
-#     driver.get(url)
-#     start_time = time.time()
-#     while (time.time() - start_time) < timeout:
-#         time.sleep(1)
-#     driver.quit()
-#     return
-
-# def main(url, output_pref, shaping):
-#     vid_duration = 180
-#     startPlayer(url, vid_duration)
-# if __name__ == "__main__":
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument("--url", required=True, help="YouTube video URL")
-#     parser.add_argument("--output_pref", required=True, help="Output file prefix")
-#     parser.add_argument("--shaping", type=bool, default=False, help="Enable network shaping")
-#     args = parser.parse_args()
-#     main(args.url, args.output_pref, args.shaping)
